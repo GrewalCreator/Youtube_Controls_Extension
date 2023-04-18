@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Youtube Controls",
+  "description": "Toggle The Controls Covering The Video Player On Youtube",
+  "version": "0.1.0",
+  "icons": {
+
+  },
+  "permissions":["activeTab", "contextMenus", "scripting", "activeTab", "tabs"],
+  "incognito": "split",
+  "background": {
+    "service_worker": "./background.js"
+  },
+  "action": {
+    "default_popup": "./view/popup.html"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "scripts/disable.js",
+        "scripts/enable.js"
+      ],
+      "matches": [
+        "https://www.youtube.com/watch?v=*"
+      ]
+    }
+  ]
+}
