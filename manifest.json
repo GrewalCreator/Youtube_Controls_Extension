@@ -17,8 +17,7 @@
   "content_scripts": [
     {
       "js": [
-        "scripts/disable.js",
-        "scripts/enable.js"
+        "./content-script.js"
       ],
       "matches": [
         "https://www.youtube.com/watch?v=*"
