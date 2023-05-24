@@ -6,7 +6,7 @@
   "icons": {
 
   },
-  "permissions":["activeTab", "contextMenus", "scripting", "activeTab", "tabs"],
+  "permissions":["activeTab", "contextMenus", "scripting", "tabs"],
   "incognito": "split",
   "background": {
     "service_worker": "./background.js"

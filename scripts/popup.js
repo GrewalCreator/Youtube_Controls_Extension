@@ -1,6 +1,6 @@
 let toggleButton = document.getElementById("toggle-switch");
 
-document.getElementById("toggle-switch").addEventListener('click', function(){
+document.getElementById("toggle").addEventListener('change', function(){
     chrome.runtime.sendMessage({action: "executeToggleFunction"})
         .then(r => {
             console.log("Message From popup.js Successfully Executed")
@@ -9,18 +9,21 @@ document.getElementById("toggle-switch").addEventListener('click', function(){
 });
 
 
-
-chrome.runtime.onMessage.addListener((async function (request, sender, sendResponse) {
-    if (request.action === "getState") {
-        return toggleButton.style.backgroundColor;
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        if (request.action === "getState") {
+            console.log(toggleButton.style.backgroundColor.toString());
+            sendResponse(toggleButton.style.backgroundColor.toString());
+            return true;
+        }
     }
-}))
+);
 
 chrome.runtime.onMessage.addListener((async function (request, sender, sendResponse) {
     if (request.action === "toggleSuccess") {
         let buttonColor = toggleButton.style.backgroundColor;
 
-        buttonColor === "red" ? buttonColor = "green" : buttonColor = "red";
+        buttonColor = (buttonColor === "red") ? "green" : "red";
 
         toggleButton.style.backgroundColor = buttonColor;
     }

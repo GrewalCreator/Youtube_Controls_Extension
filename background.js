@@ -1,17 +1,24 @@
+let currState = 0;
 async function getCurrentTab() {
-    let queryOptions = { active: true, lastFocusedWindow: true };
+    let queryOptions = { active: true, currentWindow: true };
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
     let [tab] = await chrome.tabs.query(queryOptions);
     return tab;
 }
 
-async function injectCSS(css, currentTab){
+async function injectCSS(actionCSS){
+    const currentTab = await getCurrentTab();
+
     await chrome.scripting.insertCSS({
         target: {tabId: currentTab.id},
-        files: [`./view/css/disable.css`]
+        files: [`./view/css/${actionCSS}.css`]
     })
-        .then(r => console.log("Successfully Injected CSS: " + r))
+        .then(r => {
+            chrome.runtime.sendMessage({action: "toggleSuccess"})
+            console.log("Successfully Injected CSS: " + r)
+        })
         .catch(err => console.log("Error Injecting CSS " + err));
+
 }
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -26,26 +33,27 @@ chrome.runtime.onInstalled.addListener(() => {
 //Listener For When The Toggle Switch State is Changed
 chrome.runtime.onMessage.addListener((async function (request, sender, sendResponse) {
     if (request.action === "executeToggleFunction") {
+
         const currentTab = await getCurrentTab();
-        // send message get state
-        try {
-            const isEnabled = (await chrome.runtime.sendMessage({action: "getState"})) === "green";
 
-            // if disabled, -> enable and inject
-            if (!isEnabled) {
-
-                await injectCSS("enable", currentTab);
-            }
-            // else -> disable and inject
-            else {
-                await injectCSS("disable", currentTab);
-            }
-
-            // send message toggle success
-            await chrome.runtime.sendMessage({action: "toggleSuccess"});
-        }catch(err){
-            console.error("Toggle Error: " + err)
+        let change;
+        if(currState === 0){
+            change = "enable";
+            currState = 1;
+        }else{
+            currState = 0;
+            change = "disable"
         }
+        await chrome.scripting.insertCSS({
+            target: {tabId: currentTab.id},
+            files: [`./view/css/${change}.css`]
+        })
+            .then(r => {
+                chrome.runtime.sendMessage({action: "toggleSuccess"})
+                console.log("Successfully Injected CSS: " + r)
+            })
+            .catch(err => console.log("Error Injecting CSS " + err));
+
 
     }
 }))
