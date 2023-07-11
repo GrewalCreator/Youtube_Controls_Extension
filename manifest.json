@@ -4,16 +4,33 @@
   "description": "Toggle The Controls Covering The Video Player On Youtube",
   "version": "0.1.0",
   "icons": {
+    "16": "./images/16x16.png",
+    "19": "./images/19x19.png",
+    "38": "./images/38x38.png",
+    "48": "./images/48x48.png",
+    "128": "./images/128x128.png"
 
   },
-  "permissions":["activeTab", "contextMenus", "scripting", "tabs"],
+  "host_permissions": [
+    "https://www.youtube.com/watch?v=*"
+  ],
+  "permissions":["activeTab", "contextMenus", "scripting"],
   "incognito": "split",
   "background": {
     "service_worker": "./background.js"
   },
   "action": {
-    "default_popup": "./view/popup.html"
+    "default_title": "Toggle Controls",
+    "default_popup": "./view/popup.html",
+    "default_icon": {
+      "16": "./images/16x16.png",
+      "19": "./images/19x19.png",
+      "38": "./images/38x38.png",
+      "48": "./images/48x48.png",
+      "128": "./images/128x128.png"
+    }
   },
+
   "content_scripts": [
     {
       "js": [

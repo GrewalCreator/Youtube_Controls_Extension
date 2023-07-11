@@ -1,4 +1,4 @@
-let currState = 0;
+let currState = 1;
 async function getCurrentTab() {
     let queryOptions = { active: true, currentWindow: true };
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
@@ -6,15 +6,15 @@ async function getCurrentTab() {
     return tab;
 }
 
-async function injectCSS(actionCSS){
+async function injectCSS(change){
     const currentTab = await getCurrentTab();
 
     await chrome.scripting.insertCSS({
         target: {tabId: currentTab.id},
-        files: [`./view/css/${actionCSS}.css`]
+        files: [`./view/css/${change}.css`]
     })
         .then(r => {
-            chrome.runtime.sendMessage({action: "toggleSuccess"})
+            //chrome.runtime.sendMessage({action: "toggleSuccess"})
             console.log("Successfully Injected CSS: " + r)
         })
         .catch(err => console.log("Error Injecting CSS " + err));
@@ -34,7 +34,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onMessage.addListener((async function (request, sender, sendResponse) {
     if (request.action === "executeToggleFunction") {
 
-        const currentTab = await getCurrentTab();
+
 
         let change;
         if(currState === 0){
@@ -44,15 +44,9 @@ chrome.runtime.onMessage.addListener((async function (request, sender, sendRespo
             currState = 0;
             change = "disable"
         }
-        await chrome.scripting.insertCSS({
-            target: {tabId: currentTab.id},
-            files: [`./view/css/${change}.css`]
-        })
-            .then(r => {
-                chrome.runtime.sendMessage({action: "toggleSuccess"})
-                console.log("Successfully Injected CSS: " + r)
-            })
-            .catch(err => console.log("Error Injecting CSS " + err));
+
+        await injectCSS(change)
+
 
 
     }
